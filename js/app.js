@@ -19,17 +19,43 @@ const iniciarApp = () => {
 };
 
 const validarFormulario = (event) => {
+
     if (event.target.value.length > 0) {
-        //TODO
+        if (event.target.type === 'email') {
+            validarEmail(event);
+        } else {
+            event.target.classList.remove('border', 'border-red-500');
+            event.target.classList.add('border', 'border-green-500');
+            const error = document.querySelector('p.error');
+            if (error) {
+                error.remove();
+            }
+        }
     } else {
+        event.target.classList.remove('border', 'border-green-500');
         event.target.classList.add('border', 'border-red-500');
         mostrarError();
     }
+
 };
 
-const mostrarError = () => {
+const validarEmail = (event) => {
+    const expresion = /\w+@\w+\.+[a-z]/;
+    if (expresion.test(event.target.value)) {
+        event.target.classList.remove('border', 'border-red-500');
+        event.target.classList.add('border', 'border-green-500');
+        const error = document.querySelector('p.error');
+        error.remove();
+    } else {
+        event.target.classList.remove('border', 'border-green-500');
+        event.target.classList.add('border', 'border-red-500');
+        mostrarError('El email no es valido');
+    }
+};
+
+const mostrarError = ( mensaje = 'Todos los campos son obligatorios') => {
     const error = document.createElement('p');
-    error.textContent = 'Todos los campos son obligatorios';
+    error.textContent = mensaje;
     error.classList.add(
         'text-red-500',
         'mt-5',

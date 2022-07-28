@@ -1,4 +1,5 @@
 const btnEnviar = document.querySelector('#enviar');
+const btnReset = document.querySelector('#resetBtn');
 const email = document.querySelector('#email');
 const asunto = document.querySelector('#asunto');
 const mensaje = document.querySelector('#mensaje');
@@ -11,6 +12,8 @@ const eventListeners = () => {
     email.addEventListener('blur', validarFormulario);
     asunto.addEventListener('blur', validarFormulario);
     mensaje.addEventListener('blur', validarFormulario);
+    btnEnviar.addEventListener('click', enviarEmail);
+    btnReset.addEventListener('click', resetearFormulario);
 };
 
 const iniciarApp = () => {
@@ -37,6 +40,18 @@ const validarFormulario = (event) => {
         mostrarError();
     }
 
+    validarVacios();
+
+};
+
+const validarVacios = () => {
+    if (email.value !== '' && asunto.value !== '' && mensaje.value !== '') {
+        btnEnviar.disabled = false;
+        btnEnviar.classList.remove('cursor-not-allowed', 'opacity-50');
+    } else {
+        btnEnviar.disabled = true;
+        btnEnviar.classList.add('cursor-not-allowed', 'opacity-50');
+    }
 };
 
 const validarEmail = (event) => {
@@ -45,7 +60,9 @@ const validarEmail = (event) => {
         event.target.classList.remove('border', 'border-red-500');
         event.target.classList.add('border', 'border-green-500');
         const error = document.querySelector('p.error');
-        error.remove();
+        if (error) {
+            error.remove();
+        }
     } else {
         event.target.classList.remove('border', 'border-green-500');
         event.target.classList.add('border', 'border-red-500');
@@ -53,9 +70,9 @@ const validarEmail = (event) => {
     }
 };
 
-const mostrarError = ( mensaje = 'Todos los campos son obligatorios') => {
+const mostrarError = ( mensajeError = 'Todos los campos son obligatorios') => {
     const error = document.createElement('p');
-    error.textContent = mensaje;
+    error.textContent = mensajeError;
     error.classList.add(
         'text-red-500',
         'mt-5',
@@ -71,8 +88,32 @@ const mostrarError = ( mensaje = 'Todos los campos son obligatorios') => {
     const errores = document.querySelectorAll('.error');
     if (errores.length === 0) {
         formulario.appendChild(error);
-    };
+    }
 };
 
+
+const enviarEmail = (event) => {
+    event.preventDefault();
+    const spinnerGif = document.querySelector('#spinner');
+    spinnerGif.style.display = 'flex';
+    setTimeout(() => {
+        spinnerGif.style.display = 'none';
+        Swal.fire({
+            title: '¡Gracias!',
+            text: 'Mensaje enviado correctamente',
+            icon: 'success',
+            confirmButtonText: 'Ok'
+        });
+    }, 3000);
+
+    setTimeout(() => {
+        resetearFormulario();
+    }, 4000);
+};
+
+const resetearFormulario = () => {
+    formulario.reset();
+    iniciarApp();
+};
 
 eventListeners();
